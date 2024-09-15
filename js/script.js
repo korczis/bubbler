@@ -18,7 +18,7 @@
         const ctx = canvas.getContext('2d');
 
         // Load the background image dynamically via query parameter
-        const imgSrc = getQueryParam('bg') || 'https://korczis.github.io/bubbler/images/image.png';
+        const imgSrc = getQueryParam('bg') || 'images/image.png';
         const img = new Image();
         img.src = imgSrc;
 

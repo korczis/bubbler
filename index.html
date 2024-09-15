@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modular Speech Bubble</title>
+
+    <!-- Default Open Graph Meta Tags -->
+    <meta property="og:title" content="Default Title" id="ogTitle">
+    <meta property="og:description" content="Default description" id="ogDescription">
+    <meta property="og:image" content="images/default-image.png" id="ogImage">
+    <meta property="og:url" content="https://korczis.github.io/bubbler/" id="ogUrl">
+
     <style>
         canvas {
             display: block;
@@ -17,6 +24,29 @@
 
 <script src="js/script.js"></script>
 
+<script>
+    // Function to get query parameters
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Modify Open Graph meta tags dynamically
+    function updateOgTags() {
+        const ogTitle = getQueryParam('title') || 'Default Title';
+        const ogDescription = getQueryParam('description') || 'Default description';
+        const ogImage = getQueryParam('image') || 'images/default-image.png';
+        const ogUrl = window.location.href;
+
+        document.getElementById('ogTitle').setAttribute('content', ogTitle);
+        document.getElementById('ogDescription').setAttribute('content', ogDescription);
+        document.getElementById('ogImage').setAttribute('content', ogImage);
+        document.getElementById('ogUrl').setAttribute('content', ogUrl);
+    }
+
+    // Update OG tags on page load
+    updateOgTags();
+</script>
+
 </body>
 </html>
-<x></x>

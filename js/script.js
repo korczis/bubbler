@@ -10,7 +10,7 @@
     }
 
     /**
-     * Main function to initialize the canvas, draw the image and the speech bubbles (top and bottom).
+     * Main function to initialize the canvas, draw the image and the speech bubble.
      */
     function initCanvas() {
         const canvas = document.getElementById('canvas');
@@ -30,7 +30,7 @@
             // Extract parameters from the URL
             const params = extractParameters();
 
-            // Draw top and bottom speech bubbles based on parameters
+            // Draw speech bubbles based on provided or default parameters
             drawSpeechBubbles(ctx, canvas, params);
         };
     }
@@ -54,22 +54,18 @@
      * @param {object} params - The parameters including text, and font size.
      */
     function drawSpeechBubbles(ctx, canvas, params) {
-        // Define common bubble properties
         const bubblePadding = 20;
         const bubbleWidth = canvas.width - 2 * bubblePadding;
         const bubbleHeight = 100;
 
-        // Set up font properties
         ctx.font = `${params.fontSize}px Arial`;
         ctx.textAlign = 'center';
 
-        // Draw the top text bubble if it exists
         if (params.topText) {
             const topY = bubblePadding;
             drawSpeechBubble(ctx, bubblePadding, topY, bubbleWidth, bubbleHeight, params.topText);
         }
 
-        // Draw the bottom text bubble if it exists
         if (params.bottomText) {
             const bottomY = canvas.height - bubbleHeight - bubblePadding;
             drawSpeechBubble(ctx, bubblePadding, bottomY, bubbleWidth, bubbleHeight, params.bottomText);

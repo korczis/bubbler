@@ -8,7 +8,7 @@
     <!-- Default Open Graph Meta Tags -->
     <meta property="og:title" content="Default Title" id="ogTitle">
     <meta property="og:description" content="Default description" id="ogDescription">
-    <meta property="og:image" content="images/default-image.png" id="ogImage">
+    <meta property="og:image" content="https://korczis.github.io/bubbler/images/image.png" id="ogImage">
     <meta property="og:url" content="https://korczis.github.io/bubbler/" id="ogUrl">
 
     <style>
@@ -35,7 +35,7 @@
     function updateOgTags() {
         const ogTitle = getQueryParam('title') || 'Default Title';
         const ogDescription = getQueryParam('description') || 'Default description';
-        const ogImage = getQueryParam('image') || 'images/default-image.png';
+        const ogImage = getQueryParam('image') || 'https://korczis.github.io/bubbler/images/image.png';
         const ogUrl = window.location.href;
 
         document.getElementById('ogTitle').setAttribute('content', ogTitle);

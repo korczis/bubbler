@@ -10,14 +10,14 @@
     }
 
     /**
-     * Main function to initialize the canvas, draw the image and the speech bubble.
+     * Main function to initialize the canvas, draw the image, and the speech bubbles (top and bottom).
      */
     function initCanvas() {
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Load the image dynamically
-        const imgSrc = 'images/image.png';  // Replace with your image path
+        // Load the background image dynamically via query parameter
+        const imgSrc = getQueryParam('bg') || 'https://korczis.github.io/bubbler/images/image.png';
         const img = new Image();
         img.src = imgSrc;
 
@@ -36,7 +36,7 @@
     }
 
     /**
-     * Function to extract all parameters related to speech bubble, positioning, and font size.
+     * Function to extract all parameters related to speech bubble, positioning, font size, boldness, etc.
      * @returns {object} - A dictionary of relevant parameters.
      */
     function extractParameters() {
@@ -44,6 +44,9 @@
             topText: getQueryParam('top') || '',
             bottomText: getQueryParam('bottom') || '',
             fontSize: getQueryParam('font') || '30',  // Default font size
+            bold: getQueryParam('bold') === 'true',  // Default is false, set to 'true' for bold
+            topPosition: getQueryParam('topPosition') || '10',  // Default top position is 10px
+            bottomPosition: getQueryParam('bottomPosition') || '10'  // Default bottom position is 10px
         };
     }
 
@@ -51,23 +54,27 @@
      * Draws the speech bubbles based on the parameters for top and bottom.
      * @param {object} ctx - The canvas rendering context.
      * @param {object} canvas - The canvas element.
-     * @param {object} params - The parameters including text, and font size.
+     * @param {object} params - The parameters including text, font size, and boldness.
      */
     function drawSpeechBubbles(ctx, canvas, params) {
         const bubblePadding = 20;
         const bubbleWidth = canvas.width - 2 * bubblePadding;
         const bubbleHeight = 100;
 
-        ctx.font = `${params.fontSize}px Arial`;
+        // Set up font properties, make text bold if requested
+        const fontWeight = params.bold ? 'bold' : 'normal';
+        ctx.font = `${fontWeight} ${params.fontSize}px Arial`;
         ctx.textAlign = 'center';
 
+        // Draw the top text bubble if it exists
         if (params.topText) {
-            const topY = bubblePadding;
+            const topY = parseInt(params.topPosition);  // Customizable top position
             drawSpeechBubble(ctx, bubblePadding, topY, bubbleWidth, bubbleHeight, params.topText);
         }
 
+        // Draw the bottom text bubble if it exists
         if (params.bottomText) {
-            const bottomY = canvas.height - bubbleHeight - bubblePadding;
+            const bottomY = canvas.height - bubbleHeight - parseInt(params.bottomPosition);  // Customizable bottom position
             drawSpeechBubble(ctx, bubblePadding, bottomY, bubbleWidth, bubbleHeight, params.bottomText);
         }
     }

@@ -1,4 +1,3 @@
-
 (function() {
     /**
      * Utility function to extract query parameters from the URL.
@@ -8,6 +7,21 @@
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
+    }
+
+    /**
+     * Returns a random fatherly wisdom quote (moudro) when needed.
+     * @returns {string} - A random fatherly wisdom quote.
+     */
+    function getRandomWisdom() {
+        const quotes = [
+            "Čas jsou peníze.",
+            "Snaž se být lepší verzí sebe sama.",
+            "Život není fér, zvykni si.",
+            "Neodkládej na zítra to, co můžeš udělat dnes.",
+            "Nikdy se nevzdávej."
+        ];
+        return quotes[Math.floor(Math.random() * quotes.length)];
     }
 
     /**
@@ -39,6 +53,9 @@
                 drawParagraph(ctx, canvas, params);
             }
         };
+
+        // Set dynamic OG meta tags
+        setOGMetaTags();
     }
 
     /**
@@ -47,8 +64,8 @@
      */
     function extractParameters() {
         return {
-            topText: getQueryParam('top') || 'Říká otec',
-            bottomText: getQueryParam('bottom') || 'Ano, tatínku',
+            topText: getQueryParam('top') || 'Ted me dobře poslouchej synu',  // "Listen to me well, son" as default top text
+            bottomText: getQueryParam('bottom') || getRandomWisdom(),  // Dynamic random wisdom for bottom text
             topFontSize: getQueryParam('topFontSize') || '40',  // Font size for top text
             bottomFontSize: getQueryParam('bottomFontSize') || '40',  // Font size for bottom text
             topFontStyle: getQueryParam('topFontStyle') || 'bold',  // Font style for top text
@@ -64,6 +81,23 @@
             textColor: getQueryParam('textColor') || 'white',  // Default paragraph text color
             textAlign: getQueryParam('textAlign') || 'center'  // Default text alignment for paragraph
         };
+    }
+
+    /**
+     * Function to dynamically set Open Graph meta tags based on query parameters.
+     */
+    function setOGMetaTags() {
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        const ogDescription = document.querySelector('meta[property="og:description"]');
+        const ogImage = document.querySelector('meta[property="og:image"]');
+
+        const title = getQueryParam('top') || 'Ted me dobře poslouchej synu';
+        const description = getQueryParam('bottom') || getRandomWisdom();
+        const image = getQueryParam('bg') || 'images/image.png';
+
+        if (ogTitle) ogTitle.setAttribute('content', title);
+        if (ogDescription) ogDescription.setAttribute('content', description);
+        if (ogImage) ogImage.setAttribute('content', image);
     }
 
     /**

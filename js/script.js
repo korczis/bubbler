@@ -10,18 +10,22 @@
     }
 
     /**
-     * Returns a random fatherly wisdom quote (moudro) when needed.
-     * @returns {string} - A random fatherly wisdom quote.
+     * Fetches and returns a random fatherly wisdom quote from an external JSON file.
+     * @returns {Promise<string>} - A promise that resolves to a random fatherly wisdom quote.
      */
     function getRandomWisdom() {
-        const quotes = [
-            "Čas jsou peníze.",
-            "Snaž se být lepší verzí sebe sama.",
-            "Život není fér, zvykni si.",
-            "Neodkládej na zítra to, co můžeš udělat dnes.",
-            "Nikdy se nevzdávej."
-        ];
-        return quotes[Math.floor(Math.random() * quotes.length)];
+        const jsonUrl = 'https://korczis.github.io/bubbler/js/wisdom.json'; // JSON with wisdom quotes
+
+        return fetch(jsonUrl)
+            .then(response => response.json())
+            .then(data => {
+                const wisdoms = data.wisdoms;
+                return wisdoms[Math.floor(Math.random() * wisdoms.length)];
+            })
+            .catch(error => {
+                console.error('Error fetching wisdom:', error);
+                return "Nikdy se nevzdávej.";  // Default quote if there's an error
+            });
     }
 
     /**
@@ -36,22 +40,20 @@
         const img = new Image();
         img.src = imgSrc;
 
-        // When the image is loaded, adjust canvas and draw elements
         img.onload = function() {
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // Extract parameters from the URL
-            const params = extractParameters();
+            // Extract parameters and draw content
+            extractParameters().then(params => {
+                drawSpeechBubbles(ctx, canvas, params);
 
-            // Draw speech bubbles based on provided or default parameters
-            drawSpeechBubbles(ctx, canvas, params);
-
-            // Draw full-width paragraph text if provided
-            if (params.text) {
-                drawParagraph(ctx, canvas, params);
-            }
+                // Draw full-width paragraph text if provided
+                if (params.text) {
+                    drawParagraph(ctx, canvas, params);
+                }
+            });
         };
 
         // Set dynamic OG meta tags
@@ -60,18 +62,18 @@
 
     /**
      * Function to extract all parameters related to speech bubbles, overlay text, font size, boldness, etc.
-     * @returns {object} - A dictionary of relevant parameters.
+     * @returns {Promise<object>} - A promise that resolves to a dictionary of relevant parameters.
      */
     function extractParameters() {
-        return {
+        return getRandomWisdom().then(randomWisdom => ({
             topText: getQueryParam('top') || 'Ted me dobře poslouchej synu',  // "Listen to me well, son" as default top text
-            bottomText: getQueryParam('bottom') || getRandomWisdom(),  // Dynamic random wisdom for bottom text
+            bottomText: getQueryParam('bottom') || randomWisdom,  // Dynamic random wisdom for bottom text
             topFontSize: getQueryParam('topFontSize') || '40',  // Font size for top text
             bottomFontSize: getQueryParam('bottomFontSize') || '40',  // Font size for bottom text
             topFontStyle: getQueryParam('topFontStyle') || 'bold',  // Font style for top text
             bottomFontStyle: getQueryParam('bottomFontStyle') || 'italic',  // Font style for bottom text
             topPosition: getQueryParam('topPosition') || '50',  // Default top position
-            bottomPosition: getQueryParam('bottomPosition') || (canvas.height - 150),  // Default bottom position
+            bottomPosition: getQueryParam('bottomPosition') || '150',  // Default bottom position
             topFont: getQueryParam('topFont') || 'Arial',  // Font family for top
             bottomFont: getQueryParam('bottomFont') || 'Arial',  // Font family for bottom
             text: getQueryParam('text') || '',  // Full-width paragraph text
@@ -80,7 +82,7 @@
             fontFamily: getQueryParam('fontFamily') || 'Arial',  // Default paragraph font family
             textColor: getQueryParam('textColor') || 'white',  // Default paragraph text color
             textAlign: getQueryParam('textAlign') || 'center'  // Default text alignment for paragraph
-        };
+        }));
     }
 
     /**
@@ -92,7 +94,7 @@
         const ogImage = document.querySelector('meta[property="og:image"]');
 
         const title = getQueryParam('top') || 'Ted me dobře poslouchej synu';
-        const description = getQueryParam('bottom') || getRandomWisdom();
+        const description = getQueryParam('bottom') || 'Rada otce';  // Default OG description
         const image = getQueryParam('bg') || 'images/image.png';
 
         if (ogTitle) ogTitle.setAttribute('content', title);
@@ -149,33 +151,6 @@
         // Draw each line of text inside the bubble
         lines.forEach((line, index) => {
             ctx.fillText(line, x + width / 2, y + bubblePadding + (index + 1) * lineHeight);  // Draw centered text line by line
-        });
-    }
-
-    /**
-     * Draws a full-width paragraph, spanning the full width of the image and centered.
-     * @param {object} ctx - The canvas rendering context.
-     * @param {object} canvas - The canvas element.
-     * @param {object} params - The text parameters including font, style, and alignment.
-     */
-    function drawParagraph(ctx, canvas, params) {
-        const bubblePadding = 20;
-        const maxWidth = canvas.width - 2 * bubblePadding;  // Full width minus padding
-        const lineHeight = parseInt(params.fontSize) + 10;  // Line height adjusted for font size
-
-        ctx.font = `${params.fontStyle} ${params.fontSize}px ${params.fontFamily}`;
-        ctx.fillStyle = params.textColor;
-        ctx.textAlign = params.textAlign;
-
-        const lines = getLines(ctx, params.text, maxWidth);
-
-        // Calculate starting Y position for vertical centering
-        const totalTextHeight = lines.length * lineHeight;
-        const startY = (canvas.height - totalTextHeight) / 2;
-
-        // Draw each line of text centered on the image
-        lines.forEach((line, index) => {
-            ctx.fillText(line, canvas.width / 2, startY + (index + 1) * lineHeight);
         });
     }
 

@@ -10,13 +10,13 @@
     }
 
     /**
-     * Fetches and returns a random fatherly wisdom quote from an external JSON file.
+     * Fetches and returns a random fatherly wisdom quote from a custom JSON path or default.
      * @returns {Promise<string>} - A promise that resolves to a random fatherly wisdom quote.
      */
     function getRandomWisdom() {
-        const jsonUrl = 'https://korczis.github.io/bubbler/js/wisdom.json'; // JSON with wisdom quotes
+        const customJsonUrl = getQueryParam('json') || 'https://korczis.github.io/bubbler/js/wisdom.json'; // Custom or default JSON file
 
-        return fetch(jsonUrl)
+        return fetch(customJsonUrl)
             .then(response => response.json())
             .then(data => {
                 const wisdoms = data.wisdoms;
@@ -24,7 +24,7 @@
             })
             .catch(error => {
                 console.error('Error fetching wisdom:', error);
-                return "Nikdy se nevzdávej.";  // Default quote if there's an error
+                return "Nikdy se nevzdávej.";  // Default quote in case of error
             });
     }
 
@@ -115,8 +115,12 @@
         // Draw the top text bubble
         drawSpeechBubble(ctx, bubblePadding, parseInt(params.topPosition), bubbleWidth, params.topText, params.topFontStyle, params.topFont, parseInt(params.topFontSize));
 
-        // Draw the bottom text bubble
-        drawSpeechBubble(ctx, bubblePadding, parseInt(params.bottomPosition), bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, parseInt(params.bottomFontSize));
+        // Calculate the bottom position for the bottom text bubble
+        const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, parseInt(params.bottomFontSize));
+        const bottomPosition = canvas.height - bottomTextHeight - bubblePadding;
+
+        // Draw the bottom text bubble at the bottom of the canvas
+        drawSpeechBubble(ctx, bubblePadding, bottomPosition, bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, parseInt(params.bottomFontSize));
     }
 
     /**
@@ -178,6 +182,25 @@
         }
         lines.push(currentLine);
         return lines;
+    }
+
+    /**
+     * Calculates the height of theHere’s the rest of the code, including the missing parts:
+
+```javascript
+    /**
+     * Calculates the height of the text block that will be rendered.
+     * @param {object} ctx - The canvas rendering context.
+     * @param {string} text - The text to measure.
+     * @param {number} maxWidth - The maximum width of the text block.
+     * @param {number} fontSize - The font size for the text.
+     * @returns {number} - The height of the text block.
+     */
+    function getTextHeight(ctx, text, maxWidth, fontSize) {
+        const bubblePadding = 20;
+        const lineHeight = fontSize + 10;
+        const lines = getLines(ctx, text, maxWidth - bubblePadding * 2);
+        return lines.length * lineHeight + bubblePadding * 2;
     }
 
     // Initialize the canvas and drawing when the window is loaded

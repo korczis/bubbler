@@ -14,13 +14,15 @@
     <meta property="og:title" content="Bubbler - Zábavný generátor bublin!">
     <meta property="og:description" content="Vytvořte si vlastní vtipné bubliny!">
     <meta property="og:image" content="https://korczis.github.io/bubbler/images/image.png">
+    <!-- Use the uploaded image -->
+    <meta property="og:image" content="https://korczis.github.io/bubbler/images/image.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://korczis.github.io/bubbler/">
     <meta property="twitter:title" content="Bubbler - Zábavný generátor bublin!">
     <meta property="twitter:description" content="Vytvořte si vlastní vtipné bubliny!">
-    <meta property="twitter:image" content="https://korczis.github.io/bubbler/images/image.png">
+    <meta property="twitter:image" content="/mnt/data/image.png">
 
     <style>
         canvas {
@@ -46,7 +48,7 @@
     function updateOgTags() {
         const ogTitle = getQueryParam('title') || 'Default Title';
         const ogDescription = getQueryParam('description') || 'Default description';
-        const ogImage = getQueryParam('image') || 'https://korczis.github.io/bubbler/images/image.png';
+        const ogImage = getQueryParam('image') || 'images/image.png'; // Use uploaded image
         const ogUrl = window.location.href;
 
         document.getElementById('ogTitle').setAttribute('content', ogTitle);

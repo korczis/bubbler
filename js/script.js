@@ -102,3 +102,4 @@
     // Initialize the canvas and drawing when the window is loaded
     window.onload = initCanvas;
 })();
+

@@ -1,39 +1,101 @@
-// Function to extract the "says" parameter from the URL
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
+(function() {
+    /**
+     * Utility function to extract query parameters from the URL
+     * @param {string} param - The name of the parameter to extract.
+     * @returns {string|null} - The value of the parameter or null if not present.
+     */
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
 
-// Create a canvas and context
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+    /**
+     * Main function to initialize the canvas, draw the image and the speech bubbles (top and bottom).
+     */
+    function initCanvas() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-// Image URL (relative path to the image in the repository)
-const imgSrc = 'images/image.png';  // The path to your image file
-const img = new Image();
-img.src = imgSrc;
+        // Load the image dynamically
+        const imgSrc = 'images/image.png';  // Replace with your image path
+        const img = new Image();
+        img.src = imgSrc;
 
-// When the image is loaded, draw it on the canvas
-img.onload = function() {
-  // Draw the image to fill the canvas
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // When the image is loaded, adjust canvas and draw elements
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-  // Get the text from the "says" query parameter
-  const bubbleText = getQueryParam('says') || 'Hello!';
+            // Extract parameters from the URL
+            const params = extractParameters();
 
-  // Draw the speech bubble rectangle
-  ctx.fillStyle = 'white';  // Background of the bubble
-  ctx.fillRect(150, 50, 500, 100);  // x, y, width, height for the rectangle
+            // Draw top and bottom speech bubbles based on parameters
+            drawSpeechBubbles(ctx, canvas, params);
+        };
+    }
 
-  // Draw the bubble border
-  ctx.strokeStyle = 'black';  // Border color
-  ctx.strokeRect(150, 50, 500, 100);  // Same x, y, width, height for the border
+    /**
+     * Function to extract all parameters related to speech bubble, positioning, and font size.
+     * @returns {object} - A dictionary of relevant parameters.
+     */
+    function extractParameters() {
+        return {
+            topText: getQueryParam('top') || '',
+            bottomText: getQueryParam('bottom') || '',
+            fontSize: getQueryParam('font') || '30',  // Default font size
+        };
+    }
 
-  // Set up text properties for the speech
-  ctx.fillStyle = 'black';  // Text color
-  ctx.font = '30px Arial';  // Text style
-  ctx.textAlign = 'center';  // Center the text horizontally
+    /**
+     * Draws the speech bubbles based on the parameters for top and bottom.
+     * @param {object} ctx - The canvas rendering context.
+     * @param {object} canvas - The canvas element.
+     * @param {object} params - The parameters including text, and font size.
+     */
+    function drawSpeechBubbles(ctx, canvas, params) {
+        // Define common bubble properties
+        const bubblePadding = 20;
+        const bubbleWidth = canvas.width - 2 * bubblePadding;
+        const bubbleHeight = 100;
 
-  // Draw the speech text inside the bubble
-  ctx.fillText(bubbleText, canvas.width / 2, 100);  // Center horizontally, set y at 100
-};
+        // Set up font properties
+        ctx.font = `${params.fontSize}px Arial`;
+        ctx.textAlign = 'center';
+
+        // Draw the top text bubble if it exists
+        if (params.topText) {
+            const topY = bubblePadding;
+            drawSpeechBubble(ctx, bubblePadding, topY, bubbleWidth, bubbleHeight, params.topText);
+        }
+
+        // Draw the bottom text bubble if it exists
+        if (params.bottomText) {
+            const bottomY = canvas.height - bubbleHeight - bubblePadding;
+            drawSpeechBubble(ctx, bubblePadding, bottomY, bubbleWidth, bubbleHeight, params.bottomText);
+        }
+    }
+
+    /**
+     * Draws a speech bubble at a given position.
+     * @param {object} ctx - The canvas rendering context.
+     * @param {number} x - The X-coordinate of the bubble.
+     * @param {number} y - The Y-coordinate of the bubble.
+     * @param {number} width - The width of the bubble.
+     * @param {number} height - The height of the bubble.
+     * @param {string} text - The text to display inside the bubble.
+     */
+    function drawSpeechBubble(ctx, x, y, width, height, text) {
+        ctx.fillStyle = 'white';  // Bubble background color
+        ctx.fillRect(x, y, width, height);  // Draw rectangle for bubble
+
+        ctx.strokeStyle = 'black';  // Bubble border color
+        ctx.strokeRect(x, y, width, height);  // Draw border for bubble
+
+        ctx.fillStyle = 'black';  // Text color
+        ctx.fillText(text, x + width / 2, y + (height / 2) + 10);  // Draw centered text
+    }
+
+    // Initialize the canvas and drawing when the window is loaded
+    window.onload = initCanvas;
+})();

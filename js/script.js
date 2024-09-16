@@ -14,7 +14,7 @@
      * @returns {Promise<string>} - A promise that resolves to a random fatherly wisdom quote.
      */
     function getRandomWisdom() {
-        const customJsonUrl = getQueryParam('json') || 'https://korczis.github.io/bubbler/js/wisdom.json'; // Custom or default JSON file
+        const customJsonUrl = getQueryParam('json') || 'https://korczis.github.io/bubbler/js/wisdom.json';
 
         return fetch(customJsonUrl)
             .then(response => response.json())
@@ -66,7 +66,7 @@
      */
     function extractParameters() {
         return getRandomWisdom().then(randomWisdom => ({
-            topText: getQueryParam('top') || 'Teď mě dobře poslouchej, synu.',  // "Listen to me well, son" as default top text
+            topText: getQueryParam('top') || 'Teď mě dobře poslouchej, synu.',  // Default top text
             bottomText: getQueryParam('bottom') || randomWisdom,  // Dynamic random wisdom for bottom text
             topFontSize: getQueryParam('topFontSize') || '40',  // Font size for top text
             bottomFontSize: getQueryParam('bottomFontSize') || '40',  // Font size for bottom text
@@ -139,13 +139,13 @@
         const lineHeight = fontSize + 10;  // Adjust line height based on font size
         ctx.font = `${fontStyle} ${fontSize}px ${font}`;
         ctx.textAlign = 'center';
-        const lines = getLines(ctx, text, width - bubblePadding * 2);
 
+        const lines = getLines(ctx, text, width - bubblePadding * 2);
         const bubbleHeight = lines.length * lineHeight + bubblePadding * 2;
 
         // Draw the speech bubble rectangle
         ctx.fillStyle = 'white';  // Bubble background color
-        ctx.fillRect(x, y, width, bubbleHeight);  // Draw rectangle for bubble
+        ctx.fillRect(x, y, width, bubbleHeight);
 
         ctx.strokeStyle = 'black';  // Bubble border color
         ctx.strokeRect(x, y, width, bubbleHeight);  // Draw border for bubble
@@ -154,33 +154,40 @@
 
         // Draw each line of text inside the bubble
         lines.forEach((line, index) => {
-            ctx.fillText(line, x + width / 2, y + bubblePadding + (index + 1) * lineHeight);  // Draw centered text line by line
+            ctx.fillText(line, x + width / 2, y + bubblePadding + (index + 1) * lineHeight);
         });
     }
 
     /**
      * Splits long text into multiple lines that fit within the maximum width.
+     * Also handles manual newlines using '%0A' or '\n'.
      * @param {object} ctx - The canvas rendering context.
      * @param {string} text - The text to split into lines.
      * @param {number} maxWidth - The maximum width of a line.
      * @returns {string[]} - An array of text lines that fit within the specified width.
      */
     function getLines(ctx, text, maxWidth) {
-        const words = text.split(' ');
         const lines = [];
-        let currentLine = words[0];
+        const paragraphs = text.split(/%0A|\n/);
 
-        for (let i = 1; i < words.length; i++) {
-            const word = words[i];
-            const width = ctx.measureText(currentLine + " " + word).width;
-            if (width < maxWidth) {
-                currentLine += " " + word;
-            } else {
-                lines.push(currentLine);
-                currentLine = word;
+        paragraphs.forEach(paragraph => {
+            const words = paragraph.split(' ');
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const word = words[i];
+                const width = ctx.measureText(currentLine + " " + word).width;
+                if (width < maxWidth) {
+                    currentLine += " " + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
             }
-        }
-        lines.push(currentLine);
+            lines.push(currentLine); // Push the last line
+            lines.push('');  // Add an empty line for manual line breaks
+        });
+
         return lines;
     }
 
@@ -200,12 +207,6 @@
     }
 
     /**
-     * Function to draw paragraph text across the canvas.
-     * @param {object} ctx - The canvas rendering context.
-     * @param {object} canvas - The canvas element.
-     * @param {object} params - The parameters including text, fontSize, fontStyle, textColor, etc.
-     */
-        /**
      * Function to draw paragraph text centered vertically across the canvas.
      * @param {object} ctx - The canvas rendering context.
      * @param {object} canvas - The canvas element.

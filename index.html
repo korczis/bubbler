@@ -22,24 +22,8 @@
     <meta id="twitterDescription" property="twitter:description" content="Vytvořte si vlastní vtipné bubliny!">
     <meta id="twitterImage" property="twitter:image" content="https://korczis.github.io/bubbler/images/image.png">
 
-    <link rel="stylesheet" href="./css/style.css" />
-
-    <!-- style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            background-color: #f0f0f0; /* Gray background color */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        canvas {
-            display: block;
-            width: auto;
-            height: 100%;
-            background-color: #ffffff; /* White background for canvas */
-        }
-    </style -->
+    <!-- External stylesheet -->
+    <link rel="stylesheet" href="./css/style.css?v=1" />
 </head>
 <body>
 
@@ -58,8 +42,6 @@
     function resizeCanvas() {
         const canvas = document.getElementById('canvas');
         const aspectRatio = 16 / 9; // Example aspect ratio (16:9)
-
-        // Set the canvas width based on the height and aspect ratio
         canvas.width = window.innerHeight * aspectRatio;
         canvas.height = window.innerHeight;
     }

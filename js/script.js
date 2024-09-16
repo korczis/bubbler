@@ -10,21 +10,89 @@
     }
 
     /**
-     * Fetches and returns a random fatherly wisdom quote from a custom JSON path or default.
-     * @returns {Promise<string>} - A promise that resolves to a random fatherly wisdom quote.
+     * Fetches and returns all the parameters from a custom JSON path or uses default values.
+     * @returns {Promise<object>} - A promise that resolves to a dictionary of parameters.
      */
-    function getRandomWisdom() {
-        const customJsonUrl = getQueryParam('json') || 'https://korczis.github.io/bubbler/js/wisdoms16k.json';
+    function getParametersFromJson() {
+        const customJsonUrl = getQueryParam('json') || './js/wisdoms16k.json';
 
         return fetch(customJsonUrl)
             .then(response => response.json())
             .then(data => {
-                const wisdoms = data.wisdoms;
-                return wisdoms[Math.floor(Math.random() * wisdoms.length)];
+                // Choose a random entry from the wisdoms array
+                const wisdomEntry = data.wisdoms[Math.floor(Math.random() * data.wisdoms.length)];
+
+                // Handle different formats: plain string, array with two strings, or array with three strings
+                let topText = getQueryParam('top') || 'Teď mě dobře poslouchej, synu.';
+                let centerText = '';
+                let bottomText = 'Nikdy se nevzdávej.';
+                let bg = getQueryParam('bg') || './images/image.png';  // Default background
+
+                if (typeof wisdomEntry === 'string') {
+                    bottomText = wisdomEntry; // Plain string -> bottom text
+                } else if (Array.isArray(wisdomEntry)) {
+                    if (wisdomEntry.length === 2) {
+                        topText = wisdomEntry[0];
+                        bottomText = wisdomEntry[1];
+                    } else if (wisdomEntry.length === 3) {
+                        topText = wisdomEntry[0];
+                        centerText = wisdomEntry[1];
+                        bottomText = wisdomEntry[2];
+                    }
+                } else if (typeof wisdomEntry === 'object') {
+                    topText = wisdomEntry.topText || topText;
+                    centerText = wisdomEntry.centerText || '';
+                    bottomText = wisdomEntry.bottomText || bottomText;
+                    bg = wisdomEntry.bg || bg;  // Custom background from JSON
+                }
+
+                // Extract parameters from JSON entry or fall back to defaults/URL parameters
+                return {
+                    topText,
+                    centerText,
+                    bottomText,
+                    bg,  // Use background from JSON if available
+                    topFontSize: wisdomEntry.topFontSize || getQueryParam('topFontSize') || '40',
+                    bottomFontSize: wisdomEntry.bottomFontSize || getQueryParam('bottomFontSize') || '40',
+                    topFontStyle: wisdomEntry.topFontStyle || getQueryParam('topFontStyle') || 'bold',
+                    bottomFontStyle: wisdomEntry.bottomFontStyle || getQueryParam('bottomFontStyle') || 'italic',
+                    topPosition: wisdomEntry.topPosition || getQueryParam('topPosition') || '50',
+                    bottomPosition: wisdomEntry.bottomPosition || getQueryParam('bottomPosition') || '150',
+                    centerPosition: getQueryParam('centerPosition') || '100', // Default center position
+                    topFont: wisdomEntry.topFont || getQueryParam('topFont') || 'Arial',
+                    bottomFont: wisdomEntry.bottomFont || getQueryParam('bottomFont') || 'Arial',
+                    text: wisdomEntry.text || getQueryParam('text') || '',
+                    fontSize: wisdomEntry.fontSize || getQueryParam('fontSize') || '40',
+                    fontStyle: wisdomEntry.fontStyle || getQueryParam('fontStyle') || 'bold',
+                    fontFamily: wisdomEntry.fontFamily || getQueryParam('fontFamily') || 'Arial',
+                    textColor: wisdomEntry.textColor || getQueryParam('textColor') || 'white',
+                    textAlign: wisdomEntry.textAlign || getQueryParam('textAlign') || 'center'
+                };
             })
             .catch(error => {
-                console.error('Error fetching wisdom:', error);
-                return "Nikdy se nevzdávej.";  // Default quote in case of error
+                console.error('Error fetching parameters:', error);
+                // Use defaults if error occurs while fetching JSON
+                return {
+                    topText: 'Teď mě dobře poslouchej, synu.',
+                    bottomText: 'Nikdy se nevzdávej.',
+                    centerText: '',
+                    bg: './images/image.png',  // Default background
+                    topFontSize: '40',
+                    bottomFontSize: '40',
+                    topFontStyle: 'bold',
+                    bottomFontStyle: 'italic',
+                    topPosition: '50',
+                    bottomPosition: '150',
+                    centerPosition: '100',
+                    topFont: 'Arial',
+                    bottomFont: 'Arial',
+                    text: '',
+                    fontSize: '40',
+                    fontStyle: 'bold',
+                    fontFamily: 'Arial',
+                    textColor: 'white',
+                    textAlign: 'center'
+                };
             });
     }
 
@@ -35,54 +103,28 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Load the background image dynamically via query parameter
-        const imgSrc = getQueryParam('bg') || 'images/image.png';
-        const img = new Image();
-        img.src = imgSrc;
+        // Extract parameters from JSON and load the image
+        getParametersFromJson().then(params => {
+            const img = new Image();
+            img.src = params.bg;  // Use the background from JSON or fallback
 
-        img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            // Extract parameters and draw content
-            extractParameters().then(params => {
+                // Draw the speech bubbles
                 drawSpeechBubbles(ctx, canvas, params);
 
                 // Draw full-width paragraph text if provided
                 if (params.text) {
                     drawParagraph(ctx, canvas, params);
                 }
-            });
-        };
+            };
+        });
 
         // Set dynamic OG meta tags
         setOGMetaTags();
-    }
-
-    /**
-     * Function to extract all parameters related to speech bubbles, overlay text, font size, boldness, etc.
-     * @returns {Promise<object>} - A promise that resolves to a dictionary of relevant parameters.
-     */
-    function extractParameters() {
-        return getRandomWisdom().then(randomWisdom => ({
-            topText: getQueryParam('top') || 'Teď mě dobře poslouchej, synu.',  // Default top text
-            bottomText: getQueryParam('bottom') || randomWisdom,  // Dynamic random wisdom for bottom text
-            topFontSize: getQueryParam('topFontSize') || '40',  // Font size for top text
-            bottomFontSize: getQueryParam('bottomFontSize') || '40',  // Font size for bottom text
-            topFontStyle: getQueryParam('topFontStyle') || 'bold',  // Font style for top text
-            bottomFontStyle: getQueryParam('bottomFontStyle') || 'italic',  // Font style for bottom text
-            topPosition: getQueryParam('topPosition') || '50',  // Default top position
-            bottomPosition: getQueryParam('bottomPosition') || '150',  // Default bottom position
-            topFont: getQueryParam('topFont') || 'Arial',  // Font family for top
-            bottomFont: getQueryParam('bottomFont') || 'Arial',  // Font family for bottom
-            text: getQueryParam('text') || '',  // Full-width paragraph text
-            fontSize: getQueryParam('fontSize') || '40',  // Default paragraph font size
-            fontStyle: getQueryParam('fontStyle') || 'bold',  // Default paragraph font style
-            fontFamily: getQueryParam('fontFamily') || 'Arial',  // Default paragraph font family
-            textColor: getQueryParam('textColor') || 'white',  // Default paragraph text color
-            textAlign: getQueryParam('textAlign') || 'center'  // Default text alignment for paragraph
-        }));
     }
 
     /**
@@ -95,7 +137,7 @@
 
         const title = getQueryParam('top') || 'Teď mě dobře poslouchej, synu.';
         const description = getQueryParam('bottom') || 'Rada otce';  // Default OG description
-        const image = getQueryParam('bg') || 'images/image.png';
+        const image = getQueryParam('bg') || './images/image.png';
 
         if (ogTitle) ogTitle.setAttribute('content', title);
         if (ogDescription) ogDescription.setAttribute('content', description);
@@ -103,7 +145,7 @@
     }
 
     /**
-     * Draws the speech bubbles based on the parameters for top and bottom.
+     * Draws the speech bubbles based on the parameters for top, center, and bottom.
      * @param {object} ctx - The canvas rendering context.
      * @param {object} canvas - The canvas element.
      * @param {object} params - The parameters including text, font size, and boldness.
@@ -114,6 +156,11 @@
 
         // Draw the top text bubble
         drawSpeechBubble(ctx, bubblePadding, parseInt(params.topPosition), bubbleWidth, params.topText, params.topFontStyle, params.topFont, parseInt(params.topFontSize));
+
+        // Draw the center text bubble if available
+        if (params.centerText) {
+            drawSpeechBubble(ctx, bubblePadding, parseInt(params.centerPosition), bubbleWidth, params.centerText, params.topFontStyle, params.topFont, parseInt(params.topFontSize));
+        }
 
         // Calculate the bottom position for the bottom text bubble
         const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, parseInt(params.bottomFontSize));

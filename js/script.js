@@ -11,6 +11,7 @@
 
     /**
      * Fetches and returns all the parameters from a custom JSON path or uses default values.
+     * If a query parameter exists, it takes precedence over the JSON.
      * @returns {Promise<object>} - A promise that resolves to a dictionary of parameters.
      */
     function getParametersFromJson() {
@@ -29,21 +30,21 @@
                 let bg = getQueryParam('bg') || './images/image.png';  // Default background
 
                 if (typeof wisdomEntry === 'string') {
-                    bottomText = wisdomEntry; // Plain string -> bottom text
+                    bottomText = getQueryParam('bottom') || wisdomEntry; // Plain string -> bottom text
                 } else if (Array.isArray(wisdomEntry)) {
                     if (wisdomEntry.length === 2) {
-                        topText = wisdomEntry[0];
-                        bottomText = wisdomEntry[1];
+                        topText = getQueryParam('top') || wisdomEntry[0];
+                        bottomText = getQueryParam('bottom') || wisdomEntry[1];
                     } else if (wisdomEntry.length === 3) {
-                        topText = wisdomEntry[0];
-                        centerText = wisdomEntry[1];
-                        bottomText = wisdomEntry[2];
+                        topText = getQueryParam('top') || wisdomEntry[0];
+                        centerText = getQueryParam('center') || wisdomEntry[1];
+                        bottomText = getQueryParam('bottom') || wisdomEntry[2];
                     }
                 } else if (typeof wisdomEntry === 'object') {
-                    topText = wisdomEntry.topText || topText;
-                    centerText = wisdomEntry.centerText || '';
-                    bottomText = wisdomEntry.bottomText || bottomText;
-                    bg = wisdomEntry.bg || bg;  // Custom background from JSON
+                    topText = getQueryParam('top') || wisdomEntry.topText || topText;
+                    centerText = getQueryParam('center') || wisdomEntry.centerText || centerText;
+                    bottomText = getQueryParam('bottom') || wisdomEntry.bottomText || bottomText;
+                    bg = getQueryParam('bg') || wisdomEntry.bg || bg;  // Custom background from JSON
                 }
 
                 // Extract parameters from JSON entry or fall back to defaults/URL parameters
@@ -52,21 +53,21 @@
                     centerText,
                     bottomText,
                     bg,  // Use background from JSON if available
-                    topFontSize: wisdomEntry.topFontSize || getQueryParam('topFontSize') || '40',
-                    bottomFontSize: wisdomEntry.bottomFontSize || getQueryParam('bottomFontSize') || '40',
-                    topFontStyle: wisdomEntry.topFontStyle || getQueryParam('topFontStyle') || 'bold',
-                    bottomFontStyle: wisdomEntry.bottomFontStyle || getQueryParam('bottomFontStyle') || 'italic',
-                    topPosition: wisdomEntry.topPosition || getQueryParam('topPosition') || '50',
-                    bottomPosition: wisdomEntry.bottomPosition || getQueryParam('bottomPosition') || '150',
+                    topFontSize: getQueryParam('topFontSize') || wisdomEntry.topFontSize || '40',
+                    bottomFontSize: getQueryParam('bottomFontSize') || wisdomEntry.bottomFontSize || '40',
+                    topFontStyle: getQueryParam('topFontStyle') || wisdomEntry.topFontStyle || 'bold',
+                    bottomFontStyle: getQueryParam('bottomFontStyle') || wisdomEntry.bottomFontStyle || 'italic',
+                    topPosition: getQueryParam('topPosition') || wisdomEntry.topPosition || '50',
+                    bottomPosition: getQueryParam('bottomPosition') || wisdomEntry.bottomPosition || '150',
                     centerPosition: getQueryParam('centerPosition') || '100', // Default center position
-                    topFont: wisdomEntry.topFont || getQueryParam('topFont') || 'Arial',
-                    bottomFont: wisdomEntry.bottomFont || getQueryParam('bottomFont') || 'Arial',
-                    text: wisdomEntry.text || getQueryParam('text') || '',
-                    fontSize: wisdomEntry.fontSize || getQueryParam('fontSize') || '40',
-                    fontStyle: wisdomEntry.fontStyle || getQueryParam('fontStyle') || 'bold',
-                    fontFamily: wisdomEntry.fontFamily || getQueryParam('fontFamily') || 'Arial',
-                    textColor: wisdomEntry.textColor || getQueryParam('textColor') || 'white',
-                    textAlign: wisdomEntry.textAlign || getQueryParam('textAlign') || 'center'
+                    topFont: getQueryParam('topFont') || wisdomEntry.topFont || 'Arial',
+                    bottomFont: getQueryParam('bottomFont') || wisdomEntry.bottomFont || 'Arial',
+                    text: getQueryParam('text') || wisdomEntry.text || '',
+                    fontSize: getQueryParam('fontSize') || wisdomEntry.fontSize || '40',
+                    fontStyle: getQueryParam('fontStyle') || wisdomEntry.fontStyle || 'bold',
+                    fontFamily: getQueryParam('fontFamily') || wisdomEntry.fontFamily || 'Arial',
+                    textColor: getQueryParam('textColor') || wisdomEntry.textColor || 'white',
+                    textAlign: getQueryParam('textAlign') || wisdomEntry.textAlign || 'center'
                 };
             })
             .catch(error => {

@@ -205,17 +205,30 @@
      * @param {object} canvas - The canvas element.
      * @param {object} params - The parameters including text, fontSize, fontStyle, textColor, etc.
      */
+        /**
+     * Function to draw paragraph text centered vertically across the canvas.
+     * @param {object} ctx - The canvas rendering context.
+     * @param {object} canvas - The canvas element.
+     * @param {object} params - The parameters including text, fontSize, fontStyle, textColor, etc.
+     */
     function drawParagraph(ctx, canvas, params) {
         const padding = 20;
         const lineHeight = parseInt(params.fontSize) + 10;
         const maxWidth = canvas.width - padding * 2;
-        const textY = canvas.height - lineHeight * 2; // Position the text at the bottom of the canvas
 
+        // Calculate total height of the text block
+        const lines = getLines(ctx, params.text, maxWidth);
+        const totalTextHeight = lines.length * lineHeight;
+
+        // Calculate the starting Y-coordinate to center the text vertically
+        const textY = (canvas.height - totalTextHeight) / 2;
+
+        // Set font styles
         ctx.font = `${params.fontStyle} ${params.fontSize}px ${params.fontFamily}`;
         ctx.fillStyle = params.textColor;
         ctx.textAlign = params.textAlign;
 
-        const lines = getLines(ctx, params.text, maxWidth);
+        // Draw each line of the paragraph text, vertically centered
         lines.forEach((line, index) => {
             ctx.fillText(line, canvas.width / 2, textY + index * lineHeight);
         });

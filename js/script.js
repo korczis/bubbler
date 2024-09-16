@@ -66,7 +66,7 @@
      */
     function extractParameters() {
         return getRandomWisdom().then(randomWisdom => ({
-            topText: getQueryParam('top') || 'Ted me dobře poslouchej synu',  // "Listen to me well, son" as default top text
+            topText: getQueryParam('top') || 'Teď mě poslouchej, synu.',  // "Listen to me well, son" as default top text
             bottomText: getQueryParam('bottom') || randomWisdom,  // Dynamic random wisdom for bottom text
             topFontSize: getQueryParam('topFontSize') || '40',  // Font size for top text
             bottomFontSize: getQueryParam('bottomFontSize') || '40',  // Font size for bottom text

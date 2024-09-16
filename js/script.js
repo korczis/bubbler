@@ -93,7 +93,7 @@
         const ogDescription = document.querySelector('meta[property="og:description"]');
         const ogImage = document.querySelector('meta[property="og:image"]');
 
-        const title = getQueryParam('top') || 'Ted me dobře poslouchej synu';
+        const title = getQueryParam('top') || 'Teď mě dobře poslouchej, synu.';
         const description = getQueryParam('bottom') || 'Rada otce';  // Default OG description
         const image = getQueryParam('bg') || 'images/image.png';
 

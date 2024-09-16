@@ -6,13 +6,23 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f0f0; /* Background color */
+    background: linear-gradient(135deg, #ffcccc, #ffe5e5); /* Softer pastel gradient background */
+}
+
+/* Wrapper for vertical centering */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    transform: translateY(-10%); /* Adjust to bring content slightly upwards */
 }
 
 /* Container for bubbles */
 .bubble-container {
     display: flex;
-    gap: 20px; /* Space between bubbles */
+    gap: 30px; /* Space between bubbles */
 }
 
 /* Style for individual bubbles */
@@ -20,19 +30,29 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 150px; /* Fixed width */
-    height: 100px; /* Fixed height */
-    background-color: #ffffff; /* Bubble color */
-    border-radius: 15px; /* Rounded corners */
-    border: 2px solid #cccccc; /* Border color */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for 3D effect */
+    width: 160px; /* Slightly larger */
+    height: 110px; /* Slightly larger */
+    background: #ffffff; /* Pure white bubble */
+    border-radius: 35px; /* More rounded corners for a softer look */
+    border: none; /* Remove the border */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for subtle depth */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover effect */
     overflow: hidden; /* Ensures text doesn't overflow */
+    cursor: pointer; /* Pointer cursor for interactivity */
+}
+
+/* Sexy hover effect */
+.bubble:hover {
+    transform: translateY(-10px); /* Lift up on hover */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
 }
 
 /* Style for text inside bubbles */
 .bubble-text {
     text-align: center;
     margin: 0; /* Remove default margins */
-    font-size: 16px; /* Adjust font size as needed */
-    color: #333333; /* Text color */
+    font-size: 18px; /* Slightly larger font */
+    font-weight: 600; /* Slightly bolder for a more stylish look */
+    color: #333333; /* Darker text color for better contrast */
+    letter-spacing: 0.5px; /* Elegant spacing */
 }

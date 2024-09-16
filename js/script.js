@@ -27,6 +27,55 @@
     }
 
     /**
+     * Utility function to update the URL with current parameters (top, center, bottom, bg).
+     * This enables the user to bookmark or share the URL with permanent values.
+     * @param {object} params - The parameters to include in the URL.
+     */
+    function updateURL(params) {
+        const url = new URL(window.location.href);
+        if (params.topText) {
+            url.searchParams.set('top', params.topText);
+        } else {
+            url.searchParams.delete('top');
+        }
+        if (params.centerText) {
+            url.searchParams.set('center', params.centerText);
+        } else {
+            url.searchParams.delete('center');
+        }
+        if (params.bottomText) {
+            url.searchParams.set('bottom', params.bottomText);
+        } else {
+            url.searchParams.delete('bottom');
+        }
+        if (params.bg) {
+            url.searchParams.set('bg', params.bg);
+        }
+
+        // history.pushState(null, '', url);
+    }
+
+    /**
+     * Returns random text for top, center, and bottom based on available wisdoms.
+     * @param {Array} wisdoms - The array of wisdoms.
+     * @returns {object} - Randomly chosen top, center, and bottom text.
+     */
+    function getRandomText(wisdoms) {
+        const wisdomEntry = wisdoms[Math.floor(Math.random() * wisdoms.length)];
+
+        if (typeof wisdomEntry === 'string') {
+            return { top: '', center: '', bottom: wisdomEntry };
+        } else if (Array.isArray(wisdomEntry)) {
+            if (wisdomEntry.length === 2) {
+                return { top: wisdomEntry[0], center: '', bottom: wisdomEntry[1] };
+            } else if (wisdomEntry.length === 3) {
+                return { top: wisdomEntry[0], center: wisdomEntry[1], bottom: wisdomEntry[2] };
+            }
+        }
+        return { top: wisdomEntry.topText || '', center: wisdomEntry.centerText || '', bottom: wisdomEntry.bottomText || '' };
+    }
+
+    /**
      * Fetches and returns all parameters from a custom JSON path or defaults to random image and wisdom.
      * If a query parameter exists, it takes precedence over the JSON.
      * @returns {Promise<object>} - A promise that resolves to a dictionary of parameters.
@@ -37,54 +86,50 @@
         return fetch(customJsonUrl)
             .then(response => response.json())
             .then(data => {
-                // Choose a random entry from the wisdoms array
-                const wisdomEntry = data.wisdoms[Math.floor(Math.random() * data.wisdoms.length)];
+                // Check for random() in parameters and select random values if needed
+                let topText = getQueryParam('top');
+                let centerText = getQueryParam('center');
+                let bottomText = getQueryParam('bottom');
+                let bg = getQueryParam('bg');
 
-                // Set default texts and background
-                let topText = getQueryParam('top') || 'Teď mě dobře poslouchej, mé dítě.';
-                let centerText = '';
-                let bottomText = 'Nikdy se nevzdávej.';
-                let bg = getQueryParam('bg') || imageArray[Math.floor(Math.random() * imageArray.length)];
-
-                // Handling various formats of wisdom entries: string, array, or object
-                if (typeof wisdomEntry === 'string') {
-                    bottomText = getQueryParam('bottom') || wisdomEntry;
-                } else if (Array.isArray(wisdomEntry)) {
-                    if (wisdomEntry.length === 2) {
-                        topText = getQueryParam('top') || wisdomEntry[0];
-                        bottomText = getQueryParam('bottom') || wisdomEntry[1];
-                    } else if (wisdomEntry.length === 3) {
-                        topText = getQueryParam('top') || wisdomEntry[0];
-                        centerText = getQueryParam('center') || wisdomEntry[1];
-                        bottomText = getQueryParam('bottom') || wisdomEntry[2];
-                    }
-                } else if (typeof wisdomEntry === 'object') {
-                    topText = getQueryParam('top') || wisdomEntry.topText || topText;
-                    centerText = getQueryParam('center') || wisdomEntry.centerText || centerText;
-                    bottomText = getQueryParam('bottom') || wisdomEntry.bottomText || bottomText;
-                    bg = getQueryParam('bg') || wisdomEntry.bg || bg;
+                // Handle random() for text fields
+                if (topText === 'random()' || centerText === 'random()' || bottomText === 'random()') {
+                    const randomText = getRandomText(data.wisdoms);
+                    topText = topText === 'random()' ? randomText.top : topText;
+                    centerText = centerText === 'random()' ? randomText.center : centerText;
+                    bottomText = bottomText === 'random()' ? randomText.bottom : bottomText;
                 }
 
+                // Handle random() for background image
+                if (bg === 'random()') {
+                    bg = imageArray[Math.floor(Math.random() * imageArray.length)];
+                } else {
+                    bg = bg || imageArray[Math.floor(Math.random() * imageArray.length)];
+                }
+
+                // Update URL with the random values
+                updateURL({ topText, centerText, bottomText, bg });
+
                 return {
-                    topText,
-                    centerText,
-                    bottomText,
+                    topText: topText || 'Teď mě dobře poslouchej, mé dítě.',
+                    centerText: centerText || '',
+                    bottomText: bottomText || 'Nikdy se nevzdávej.',
                     bg,
-                    topFontSize: getQueryParam('topFontSize') || wisdomEntry.topFontSize || '40',
-                    bottomFontSize: getQueryParam('bottomFontSize') || wisdomEntry.bottomFontSize || '40',
-                    topFontStyle: getQueryParam('topFontStyle') || wisdomEntry.topFontStyle || 'bold',
-                    bottomFontStyle: getQueryParam('bottomFontStyle') || wisdomEntry.bottomFontStyle || 'italic',
-                    topPosition: getQueryParam('topPosition') || wisdomEntry.topPosition || '50',
-                    bottomPosition: getQueryParam('bottomPosition') || wisdomEntry.bottomPosition || '150',
+                    topFontSize: getQueryParam('topFontSize') || '40',
+                    bottomFontSize: getQueryParam('bottomFontSize') || '40',
+                    topFontStyle: getQueryParam('topFontStyle') || 'bold',
+                    bottomFontStyle: getQueryParam('bottomFontStyle') || 'italic',
+                    topPosition: getQueryParam('topPosition') || '50',
+                    bottomPosition: getQueryParam('bottomPosition') || '150',
                     centerPosition: getQueryParam('centerPosition') || '100',
-                    topFont: getQueryParam('topFont') || wisdomEntry.topFont || 'Arial',
-                    bottomFont: getQueryParam('bottomFont') || wisdomEntry.bottomFont || 'Arial',
-                    text: getQueryParam('text') || wisdomEntry.text || '',
-                    fontSize: getQueryParam('fontSize') || wisdomEntry.fontSize || '40',
-                    fontStyle: getQueryParam('fontStyle') || wisdomEntry.fontStyle || 'bold',
-                    fontFamily: getQueryParam('fontFamily') || wisdomEntry.fontFamily || 'Arial',
-                    textColor: getQueryParam('textColor') || wisdomEntry.textColor || 'white',
-                    textAlign: getQueryParam('textAlign') || wisdomEntry.textAlign || 'center'
+                    topFont: getQueryParam('topFont') || 'Arial',
+                    bottomFont: getQueryParam('bottomFont') || 'Arial',
+                    text: getQueryParam('text') || '',
+                    fontSize: getQueryParam('fontSize') || '40',
+                    fontStyle: getQueryParam('fontStyle') || 'bold',
+                    fontFamily: getQueryParam('fontFamily') || 'Arial',
+                    textColor: getQueryParam('textColor') || 'white',
+                    textAlign: getQueryParam('textAlign') || 'center'
                 };
             })
             .catch(error => {
@@ -178,7 +223,7 @@
         const ogDescription = document.querySelector('meta[property="og:description"]');
         const ogImage = document.querySelector('meta[property="og:image"]');
 
-        const title = getQueryParam('top') || 'Teď mě dobře poslouchej, synu.';
+        const title = getQueryParam('top') || 'Teď mě dobře poslouchej, mé dítě.';
         const description = getQueryParam('bottom') || 'Rada otce';
         const image = getQueryParam('bg') || './images/image.png';
 
@@ -197,16 +242,17 @@
         const bubblePadding = 20;
         const bubbleWidth = canvas.width - 2 * bubblePadding;
 
-        drawSpeechBubble(ctx, bubblePadding, params.topPosition, bubbleWidth, params.topText, params.topFontStyle, params.topFont, params.topFontSize);
-
+        if (params.topText) {
+            drawSpeechBubble(ctx, bubblePadding, params.topPosition, bubbleWidth, params.topText, params.topFontStyle, params.topFont, params.topFontSize);
+        }
         if (params.centerText) {
             drawSpeechBubble(ctx, bubblePadding, params.centerPosition, bubbleWidth, params.centerText, params.topFontStyle, params.topFont, params.topFontSize);
         }
-
-        const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, params.bottomFontSize);
-        const bottomPosition = canvas.height - bottomTextHeight - bubblePadding;
-
-        drawSpeechBubble(ctx, bubblePadding, bottomPosition, bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, params.bottomFontSize);
+        if (params.bottomText) {
+            const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, params.bottomFontSize);
+            const bottomPosition = canvas.height - bottomTextHeight - bubblePadding;
+            drawSpeechBubble(ctx, bubblePadding, bottomPosition, bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, params.bottomFontSize);
+        }
     }
 
     /**

@@ -110,9 +110,7 @@
             img.src = params.bg;  // Use the background from JSON or fallback
 
             img.onload = function() {
-                const scale = getScaleFactor(img.width, img.height);
-                canvas.width = window.innerWidth; // Set canvas width to match the screen width
-                canvas.height = window.innerHeight; // Set canvas height to match the screen height
+                const scale = calculateCanvasSize(canvas, img.width, img.height);
 
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
@@ -138,19 +136,26 @@
     }
 
     /**
-     * Calculate scale factor based on screen size for mobile responsiveness.
+     * Calculate canvas size to fit the screen while maintaining aspect ratio.
+     * @param {object} canvas - The canvas element.
      * @param {number} imgWidth - The original image width.
      * @param {number} imgHeight - The original image height.
-     * @returns {number} - The scale factor.
+     * @returns {number} - The scale factor used to adjust text and elements.
      */
-    function getScaleFactor(imgWidth, imgHeight) {
-        const maxWidth = window.innerWidth;
-        const maxHeight = window.innerHeight;
+    function calculateCanvasSize(canvas, imgWidth, imgHeight) {
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
 
-        const widthRatio = maxWidth / imgWidth;
-        const heightRatio = maxHeight / imgHeight;
+        const widthRatio = screenWidth / imgWidth;
+        const heightRatio = screenHeight / imgHeight;
 
-        return Math.min(widthRatio, heightRatio); // Scale to fit within the screen
+        const scaleFactor = Math.min(widthRatio, heightRatio); // Maintain aspect ratio
+
+        // Resize the canvas based on the scale factor
+        canvas.width = imgWidth * scaleFactor;
+        canvas.height = imgHeight * scaleFactor;
+
+        return scaleFactor;
     }
 
     /**

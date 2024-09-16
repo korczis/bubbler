@@ -110,9 +110,17 @@
             img.src = params.bg;  // Use the background from JSON or fallback
 
             img.onload = function() {
-                canvas.width = img.width;
-                canvas.height = img.height;
+                const scale = getScaleFactor(img.width, img.height);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // Adjust font sizes and positions according to scale
+                params.topFontSize = parseInt(params.topFontSize) * scale;
+                params.bottomFontSize = parseInt(params.bottomFontSize) * scale;
+                params.topPosition = parseInt(params.topPosition) * scale;
+                params.bottomPosition = parseInt(params.bottomPosition) * scale;
+                params.centerPosition = parseInt(params.centerPosition) * scale;
 
                 // Draw the speech bubbles
                 drawSpeechBubbles(ctx, canvas, params);
@@ -126,6 +134,22 @@
 
         // Set dynamic OG meta tags
         setOGMetaTags();
+    }
+
+    /**
+     * Calculate scale factor based on screen size for mobile responsiveness.
+     * @param {number} imgWidth - The original image width.
+     * @param {number} imgHeight - The original image height.
+     * @returns {number} - The scale factor.
+     */
+    function getScaleFactor(imgWidth, imgHeight) {
+        const maxWidth = window.innerWidth;
+        const maxHeight = window.innerHeight;
+
+        const widthRatio = maxWidth / imgWidth;
+        const heightRatio = maxHeight / imgHeight;
+
+        return Math.min(widthRatio, heightRatio); // Scale to fit within the screen
     }
 
     /**

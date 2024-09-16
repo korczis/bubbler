@@ -1,4 +1,8 @@
 (function() {
+    const JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
+    const JSONBIN_TOKEN = '$2a$10$NTJ/5N3/eE/huUqqFZo5TOMRJvqdiDvgBamire50REBHTimpPnJh2';
+
+
     /**
      * Array of image paths for random selection.
      */
@@ -26,6 +30,43 @@
         return urlParams.get(param);
     }
 
+/**
+     * Function to save current settings to JSONbin.io
+     */
+    function saveToJsonBin() {
+        getParametersFromJson().then(params => {
+            const settings = {
+                topText: params.topText,
+                centerText: params.centerText,
+                bottomText: params.bottomText,
+                bg: params.bg,
+                topFontSize: params.topFontSize,
+                bottomFontSize: params.bottomFontSize,
+                topFontStyle: params.topFontStyle,
+                bottomFontStyle: params.bottomFontStyle,
+                topPosition: params.topPosition,
+                bottomPosition: params.bottomPosition,
+                centerPosition: params.centerPosition,
+                topFont: params.topFont,
+                bottomFont: params.bottomFont,
+                textColor: params.textColor,
+                textAlign: params.textAlign
+            };
+
+            fetch(JSONBIN_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Key': JSONBIN_TOKEN
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => console.log('Settings saved to JSONbin.io:', data))
+            .catch(error => console.error('Error saving to JSONbin.io:', error));
+        });
+    }
+
     /**
      * Utility function to update the URL with current parameters (top, center, bottom, bg).
      * This enables the user to bookmark or share the URL with permanent values.
@@ -51,8 +92,7 @@
         if (params.bg) {
             url.searchParams.set('bg', params.bg);
         }
-
-        // history.pushState(null, '', url);
+        // history.pushState(null, '', url);  // Ensure the URL is updated
     }
 
     /**
@@ -80,24 +120,30 @@
      * If a query parameter exists, it takes precedence over the JSON.
      * @returns {Promise<object>} - A promise that resolves to a dictionary of parameters.
      */
-    function getParametersFromJson() {
+     function getParametersFromJson() {
+        const dataUrl = getQueryParam('data');
         const customJsonUrl = getQueryParam('json') || './js/wisdoms16k.json';
 
-        return fetch(customJsonUrl)
+        const fetchData = dataUrl ? fetch(dataUrl, {
+            headers: { 'X-Access-Key': JSONBIN_TOKEN }
+        }) : fetch(customJsonUrl);
+
+        return fetchData
             .then(response => response.json())
             .then(data => {
-                // Check for random() in parameters and select random values if needed
-                let topText = getQueryParam('top');
-                let centerText = getQueryParam('center');
-                let bottomText = getQueryParam('bottom');
-                let bg = getQueryParam('bg');
+                const settings = data.record || data;  // For JSONbin data, `record` will hold the data
 
-                // Handle random() for text fields
-                if (topText === 'random()' || centerText === 'random()' || bottomText === 'random()') {
-                    const randomText = getRandomText(data.wisdoms);
-                    topText = topText === 'random()' ? randomText.top : topText;
-                    centerText = centerText === 'random()' ? randomText.center : centerText;
-                    bottomText = bottomText === 'random()' ? randomText.bottom : bottomText;
+                let topText = getQueryParam('top') || settings.topText || 'Teď mě dobře poslouchej, mé dítě.';  // Default value
+
+                let centerText = getQueryParam('center') || settings.centerText;
+                let bottomText = getQueryParam('bottom') || settings.bottomText || getRandomText(settings.wisdoms || []).bottom;
+                let bg = getQueryParam('bg') || settings.bg;
+
+                if (!topText && !centerText && !bottomText) {
+                    const randomText = getRandomText(settings.wisdoms || []);
+                    topText = randomText.top;
+                    centerText = randomText.center;
+                    bottomText = randomText.bottom;
                 }
 
                 // Handle random() for background image
@@ -107,29 +153,29 @@
                     bg = bg || imageArray[Math.floor(Math.random() * imageArray.length)];
                 }
 
-                // Update URL with the random values
+                // Update URL with the selected values
                 updateURL({ topText, centerText, bottomText, bg });
 
                 return {
-                    topText: topText || 'Teď mě dobře poslouchej, mé dítě.',
-                    centerText: centerText || '',
-                    bottomText: bottomText || 'Nikdy se nevzdávej.',
+                    topText,
+                    centerText,
+                    bottomText,
                     bg,
-                    topFontSize: getQueryParam('topFontSize') || '40',
-                    bottomFontSize: getQueryParam('bottomFontSize') || '40',
-                    topFontStyle: getQueryParam('topFontStyle') || 'bold',
-                    bottomFontStyle: getQueryParam('bottomFontStyle') || 'italic',
-                    topPosition: getQueryParam('topPosition') || '50',
-                    bottomPosition: getQueryParam('bottomPosition') || '150',
-                    centerPosition: getQueryParam('centerPosition') || '100',
-                    topFont: getQueryParam('topFont') || 'Arial',
-                    bottomFont: getQueryParam('bottomFont') || 'Arial',
+                    topFontSize: getQueryParam('topFontSize') || settings.topFontSize || '40',
+                    bottomFontSize: getQueryParam('bottomFontSize') || settings.bottomFontSize || '40',
+                    topFontStyle: getQueryParam('topFontStyle') || settings.topFontStyle || 'bold',
+                    bottomFontStyle: getQueryParam('bottomFontStyle') || settings.bottomFontStyle || 'italic',
+                    topPosition: getQueryParam('topPosition') || settings.topPosition || '50',
+                    bottomPosition: getQueryParam('bottomPosition') || settings.bottomPosition || '150',
+                    centerPosition: getQueryParam('centerPosition') || settings.centerPosition || '100',
+                    topFont: getQueryParam('topFont') || settings.topFont || 'Arial',
+                    bottomFont: getQueryParam('bottomFont') || settings.bottomFont || 'Arial',
                     text: getQueryParam('text') || '',
-                    fontSize: getQueryParam('fontSize') || '40',
-                    fontStyle: getQueryParam('fontStyle') || 'bold',
-                    fontFamily: getQueryParam('fontFamily') || 'Arial',
-                    textColor: getQueryParam('textColor') || 'white',
-                    textAlign: getQueryParam('textAlign') || 'center'
+                    fontSize: getQueryParam('fontSize') || settings.fontSize || '40',
+                    fontStyle: getQueryParam('fontStyle') || settings.fontStyle || 'bold',
+                    fontFamily: getQueryParam('fontFamily') || settings.fontFamily || 'Arial',
+                    textColor: getQueryParam('textColor') || settings.textColor || 'white',
+                    textAlign: getQueryParam('textAlign') || settings.textAlign || 'center'
                 };
             })
             .catch(error => {
@@ -361,4 +407,7 @@
 
     // Initialize the canvas and drawing when the window is loaded
     window.onload = initCanvas;
+
+    // Expose save function globally so it can be triggered from developer tools
+    window.saveToJsonBin = saveToJsonBin;
 })();

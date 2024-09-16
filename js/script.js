@@ -14,7 +14,7 @@
      * @returns {Promise<string>} - A promise that resolves to a random fatherly wisdom quote.
      */
     function getRandomWisdom() {
-        const customJsonUrl = getQueryParam('json') || 'https://korczis.github.io/bubbler/js/wisdom.json';
+        const customJsonUrl = getQueryParam('json') || 'https://korczis.github.io/bubbler/js/wisdoms16k.json';
 
         return fetch(customJsonUrl)
             .then(response => response.json())

@@ -1,0 +1,38 @@
+/* Basic reset */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; /* Background color */
+}
+
+/* Container for bubbles */
+.bubble-container {
+    display: flex;
+    gap: 20px; /* Space between bubbles */
+}
+
+/* Style for individual bubbles */
+.bubble {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px; /* Fixed width */
+    height: 100px; /* Fixed height */
+    background-color: #ffffff; /* Bubble color */
+    border-radius: 15px; /* Rounded corners */
+    border: 2px solid #cccccc; /* Border color */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for 3D effect */
+    overflow: hidden; /* Ensures text doesn't overflow */
+}
+
+/* Style for text inside bubbles */
+.bubble-text {
+    text-align: center;
+    margin: 0; /* Remove default margins */
+    font-size: 16px; /* Adjust font size as needed */
+    color: #333333; /* Text color */
+}

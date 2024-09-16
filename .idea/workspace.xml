@@ -5,6 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="560daec5-55b9-46b9-aa4e-431a648d806e" name="Changes" comment="feat: add OG tags">
+      <change afterPath="$PROJECT_DIR$/images/image1.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image10.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image2.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image3.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image4.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image5.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image6.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image7.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image8.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image9.webp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,12 +39,13 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "gh-pages",
-    "last_opened_file_path": "/Users/korczis/dev/bubbler"
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/korczis/dev/bubbler/images"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/images" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -239,7 +252,39 @@
       <option name="project" value="LOCAL" />
       <updated>1726471258813</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="feat: add OG tags">
+      <option name="closed" value="true" />
+      <created>1726476478812</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1726476478812</updated>
+    </task>
+    <task id="LOCAL-00025" summary="feat: add OG tags">
+      <option name="closed" value="true" />
+      <created>1726477508174</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1726477508174</updated>
+    </task>
+    <task id="LOCAL-00026" summary="feat: add OG tags">
+      <option name="closed" value="true" />
+      <created>1726478028444</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1726478028444</updated>
+    </task>
+    <task id="LOCAL-00027" summary="feat: add OG tags">
+      <option name="closed" value="true" />
+      <created>1726478476479</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1726478476479</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

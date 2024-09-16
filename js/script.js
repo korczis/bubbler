@@ -1,5 +1,22 @@
 (function() {
     /**
+     * Array of image paths for random selection.
+     */
+    const imageArray = [
+        './images/image.png',
+        './images/image1.webp',
+        './images/image2.webp',
+        './images/image3.webp',
+        './images/image4.webp',
+        './images/image5.webp',
+        './images/image6.webp',
+        './images/image7.webp',
+        './images/image8.webp',
+        './images/image9.webp',
+        './images/image10.webp'
+    ];
+
+    /**
      * Utility function to extract query parameters from the URL.
      * @param {string} param - The name of the parameter to extract.
      * @returns {string|null} - The value of the parameter or null if not present.
@@ -10,7 +27,7 @@
     }
 
     /**
-     * Fetches and returns all the parameters from a custom JSON path or uses default values.
+     * Fetches and returns all parameters from a custom JSON path or defaults to random image and wisdom.
      * If a query parameter exists, it takes precedence over the JSON.
      * @returns {Promise<object>} - A promise that resolves to a dictionary of parameters.
      */
@@ -23,14 +40,15 @@
                 // Choose a random entry from the wisdoms array
                 const wisdomEntry = data.wisdoms[Math.floor(Math.random() * data.wisdoms.length)];
 
-                // Handle different formats: plain string, array with two strings, or array with three strings
-                let topText = getQueryParam('top') || 'Teď mě dobře poslouchej, synu.';
+                // Set default texts and background
+                let topText = getQueryParam('top') || 'Teď mě dobře poslouchej, mé dítě.';
                 let centerText = '';
                 let bottomText = 'Nikdy se nevzdávej.';
-                let bg = getQueryParam('bg') || './images/image.png';  // Default background
+                let bg = getQueryParam('bg') || imageArray[Math.floor(Math.random() * imageArray.length)];
 
+                // Handling various formats of wisdom entries: string, array, or object
                 if (typeof wisdomEntry === 'string') {
-                    bottomText = getQueryParam('bottom') || wisdomEntry; // Plain string -> bottom text
+                    bottomText = getQueryParam('bottom') || wisdomEntry;
                 } else if (Array.isArray(wisdomEntry)) {
                     if (wisdomEntry.length === 2) {
                         topText = getQueryParam('top') || wisdomEntry[0];
@@ -44,22 +62,21 @@
                     topText = getQueryParam('top') || wisdomEntry.topText || topText;
                     centerText = getQueryParam('center') || wisdomEntry.centerText || centerText;
                     bottomText = getQueryParam('bottom') || wisdomEntry.bottomText || bottomText;
-                    bg = getQueryParam('bg') || wisdomEntry.bg || bg;  // Custom background from JSON
+                    bg = getQueryParam('bg') || wisdomEntry.bg || bg;
                 }
 
-                // Extract parameters from JSON entry or fall back to defaults/URL parameters
                 return {
                     topText,
                     centerText,
                     bottomText,
-                    bg,  // Use background from JSON if available
+                    bg,
                     topFontSize: getQueryParam('topFontSize') || wisdomEntry.topFontSize || '40',
                     bottomFontSize: getQueryParam('bottomFontSize') || wisdomEntry.bottomFontSize || '40',
                     topFontStyle: getQueryParam('topFontStyle') || wisdomEntry.topFontStyle || 'bold',
                     bottomFontStyle: getQueryParam('bottomFontStyle') || wisdomEntry.bottomFontStyle || 'italic',
                     topPosition: getQueryParam('topPosition') || wisdomEntry.topPosition || '50',
                     bottomPosition: getQueryParam('bottomPosition') || wisdomEntry.bottomPosition || '150',
-                    centerPosition: getQueryParam('centerPosition') || '100', // Default center position
+                    centerPosition: getQueryParam('centerPosition') || '100',
                     topFont: getQueryParam('topFont') || wisdomEntry.topFont || 'Arial',
                     bottomFont: getQueryParam('bottomFont') || wisdomEntry.bottomFont || 'Arial',
                     text: getQueryParam('text') || wisdomEntry.text || '',
@@ -72,12 +89,11 @@
             })
             .catch(error => {
                 console.error('Error fetching parameters:', error);
-                // Use defaults if error occurs while fetching JSON
                 return {
-                    topText: 'Teď mě dobře poslouchej, synu.',
+                    topText: 'Teď mě dobře poslouchej, mé dítě.',
                     bottomText: 'Nikdy se nevzdávej.',
                     centerText: '',
-                    bg: './images/image.png',  // Default background
+                    bg: imageArray[Math.floor(Math.random() * imageArray.length)],
                     topFontSize: '40',
                     bottomFontSize: '40',
                     topFontStyle: 'bold',
@@ -104,27 +120,24 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Extract parameters from JSON and load the image
+        // Extract parameters and load the image
         getParametersFromJson().then(params => {
             const img = new Image();
-            img.src = params.bg;  // Use the background from JSON or fallback
+            img.src = params.bg;
 
             img.onload = function() {
                 const scale = calculateCanvasSize(canvas, img.width, img.height);
 
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                // Adjust font sizes and positions according to scale
                 params.topFontSize = Math.floor(parseInt(params.topFontSize) * scale);
                 params.bottomFontSize = Math.floor(parseInt(params.bottomFontSize) * scale);
                 params.topPosition = Math.floor(parseInt(params.topPosition) * scale);
                 params.bottomPosition = Math.floor(parseInt(params.bottomPosition) * scale);
                 params.centerPosition = Math.floor(parseInt(params.centerPosition) * scale);
 
-                // Draw the speech bubbles
                 drawSpeechBubbles(ctx, canvas, params);
 
-                // Draw full-width paragraph text if provided
                 if (params.text) {
                     drawParagraph(ctx, canvas, params);
                 }
@@ -151,7 +164,6 @@
 
         const scaleFactor = Math.min(widthRatio, heightRatio); // Maintain aspect ratio
 
-        // Resize the canvas based on the scale factor
         canvas.width = imgWidth * scaleFactor;
         canvas.height = imgHeight * scaleFactor;
 
@@ -167,7 +179,7 @@
         const ogImage = document.querySelector('meta[property="og:image"]');
 
         const title = getQueryParam('top') || 'Teď mě dobře poslouchej, synu.';
-        const description = getQueryParam('bottom') || 'Rada otce';  // Default OG description
+        const description = getQueryParam('bottom') || 'Rada otce';
         const image = getQueryParam('bg') || './images/image.png';
 
         if (ogTitle) ogTitle.setAttribute('content', title);
@@ -185,19 +197,15 @@
         const bubblePadding = 20;
         const bubbleWidth = canvas.width - 2 * bubblePadding;
 
-        // Draw the top text bubble
         drawSpeechBubble(ctx, bubblePadding, params.topPosition, bubbleWidth, params.topText, params.topFontStyle, params.topFont, params.topFontSize);
 
-        // Draw the center text bubble if available
         if (params.centerText) {
             drawSpeechBubble(ctx, bubblePadding, params.centerPosition, bubbleWidth, params.centerText, params.topFontStyle, params.topFont, params.topFontSize);
         }
 
-        // Calculate the bottom position for the bottom text bubble
         const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, params.bottomFontSize);
         const bottomPosition = canvas.height - bottomTextHeight - bubblePadding;
 
-        // Draw the bottom text bubble at the bottom of the canvas
         drawSpeechBubble(ctx, bubblePadding, bottomPosition, bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, params.bottomFontSize);
     }
 
@@ -214,23 +222,19 @@
      */
     function drawSpeechBubble(ctx, x, y, width, text, fontStyle, font, fontSize) {
         const bubblePadding = 20;
-        const lineHeight = fontSize + 10;  // Adjust line height based on font size
+        const lineHeight = fontSize + 10;
         ctx.font = `${fontStyle} ${fontSize}px ${font}`;
         ctx.textAlign = 'center';
 
         const lines = getLines(ctx, text, width - bubblePadding * 2);
         const bubbleHeight = lines.length * lineHeight + bubblePadding * 2;
 
-        // Draw the speech bubble rectangle
-        ctx.fillStyle = 'white';  // Bubble background color
+        ctx.fillStyle = 'white';
         ctx.fillRect(x, y, width, bubbleHeight);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(x, y, width, bubbleHeight);
 
-        ctx.strokeStyle = 'black';  // Bubble border color
-        ctx.strokeRect(x, y, width, bubbleHeight);  // Draw border for bubble
-
-        ctx.fillStyle = 'black';  // Text color
-
-        // Draw each line of text inside the bubble
+        ctx.fillStyle = 'black';
         lines.forEach((line, index) => {
             ctx.fillText(line, x + width / 2, y + bubblePadding + (index + 1) * lineHeight);
         });
@@ -262,8 +266,8 @@
                     currentLine = word;
                 }
             }
-            lines.push(currentLine); // Push the last line
-            lines.push('');  // Add an empty line for manual line breaks
+            lines.push(currentLine);
+            lines.push('');
         });
 
         return lines;
@@ -295,19 +299,15 @@
         const lineHeight = parseInt(params.fontSize) + 10;
         const maxWidth = canvas.width - padding * 2;
 
-        // Calculate total height of the text block
         const lines = getLines(ctx, params.text, maxWidth);
         const totalTextHeight = lines.length * lineHeight;
 
-        // Calculate the starting Y-coordinate to center the text vertically
         const textY = (canvas.height - totalTextHeight) / 2;
 
-        // Set font styles
         ctx.font = `${params.fontStyle} ${params.fontSize}px ${params.fontFamily}`;
         ctx.fillStyle = params.textColor;
         ctx.textAlign = params.textAlign;
 
-        // Draw each line of the paragraph text, vertically centered
         lines.forEach((line, index) => {
             ctx.fillText(line, canvas.width / 2, textY + index * lineHeight);
         });

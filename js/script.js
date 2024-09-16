@@ -273,7 +273,7 @@
         ctx.textAlign = 'center';
 
         const lines = getLines(ctx, text, width - bubblePadding * 2);
-        const bubbleHeight = lines.length * lineHeight + bubblePadding * 2;
+        const bubbleHeight = lines.length * lineHeight + bubblePadding;
 
         ctx.fillStyle = 'white';
         ctx.fillRect(x, y, width, bubbleHeight);
@@ -328,8 +328,8 @@
      * @returns {number} - The height of the text block.
      */
     function getTextHeight(ctx, text, maxWidth, fontSize) {
-        const bubblePadding = 20;
-        const lineHeight = fontSize + 10;
+        const bubblePadding = 10; // Updated padding
+        const lineHeight = fontSize + 5; // Updated line height
         const lines = getLines(ctx, text, maxWidth - bubblePadding * 2);
         return lines.length * lineHeight + bubblePadding * 2;
     }

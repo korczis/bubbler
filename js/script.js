@@ -111,16 +111,17 @@
 
             img.onload = function() {
                 const scale = getScaleFactor(img.width, img.height);
-                canvas.width = img.width * scale;
-                canvas.height = img.height * scale;
+                canvas.width = window.innerWidth; // Set canvas width to match the screen width
+                canvas.height = window.innerHeight; // Set canvas height to match the screen height
+
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                 // Adjust font sizes and positions according to scale
-                params.topFontSize = parseInt(params.topFontSize) * scale;
-                params.bottomFontSize = parseInt(params.bottomFontSize) * scale;
-                params.topPosition = parseInt(params.topPosition) * scale;
-                params.bottomPosition = parseInt(params.bottomPosition) * scale;
-                params.centerPosition = parseInt(params.centerPosition) * scale;
+                params.topFontSize = Math.floor(parseInt(params.topFontSize) * scale);
+                params.bottomFontSize = Math.floor(parseInt(params.bottomFontSize) * scale);
+                params.topPosition = Math.floor(parseInt(params.topPosition) * scale);
+                params.bottomPosition = Math.floor(parseInt(params.bottomPosition) * scale);
+                params.centerPosition = Math.floor(parseInt(params.centerPosition) * scale);
 
                 // Draw the speech bubbles
                 drawSpeechBubbles(ctx, canvas, params);
@@ -180,19 +181,19 @@
         const bubbleWidth = canvas.width - 2 * bubblePadding;
 
         // Draw the top text bubble
-        drawSpeechBubble(ctx, bubblePadding, parseInt(params.topPosition), bubbleWidth, params.topText, params.topFontStyle, params.topFont, parseInt(params.topFontSize));
+        drawSpeechBubble(ctx, bubblePadding, params.topPosition, bubbleWidth, params.topText, params.topFontStyle, params.topFont, params.topFontSize);
 
         // Draw the center text bubble if available
         if (params.centerText) {
-            drawSpeechBubble(ctx, bubblePadding, parseInt(params.centerPosition), bubbleWidth, params.centerText, params.topFontStyle, params.topFont, parseInt(params.topFontSize));
+            drawSpeechBubble(ctx, bubblePadding, params.centerPosition, bubbleWidth, params.centerText, params.topFontStyle, params.topFont, params.topFontSize);
         }
 
         // Calculate the bottom position for the bottom text bubble
-        const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, parseInt(params.bottomFontSize));
+        const bottomTextHeight = getTextHeight(ctx, params.bottomText, bubbleWidth, params.bottomFontSize);
         const bottomPosition = canvas.height - bottomTextHeight - bubblePadding;
 
         // Draw the bottom text bubble at the bottom of the canvas
-        drawSpeechBubble(ctx, bubblePadding, bottomPosition, bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, parseInt(params.bottomFontSize));
+        drawSpeechBubble(ctx, bubblePadding, bottomPosition, bubbleWidth, params.bottomText, params.bottomFontStyle, params.bottomFont, params.bottomFontSize);
     }
 
     /**

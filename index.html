@@ -23,9 +23,19 @@
     <meta id="twitterImage" property="twitter:image" content="https://korczis.github.io/bubbler/images/image.png">
 
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #f0f0f0; /* Gray background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         canvas {
             display: block;
-            margin: 0 auto;
+            width: auto;
+            height: 100%;
+            background-color: #ffffff; /* White background for canvas */
         }
     </style>
 </head>
@@ -42,21 +52,41 @@
         return urlParams.get(param);
     }
 
-    // Modify Open Graph meta tags dynamically
-    function updateOgTags() {
-        const ogTitle = getQueryParam('title') || 'Default Title';
-        const ogDescription = getQueryParam('description') || 'Default description';
-        const ogImage = getQueryParam('image') || 'images/image.png'; // Use uploaded image
+    // Function to update canvas size while maintaining aspect ratio
+    function resizeCanvas() {
+        const canvas = document.getElementById('canvas');
+        const aspectRatio = 16 / 9; // Example aspect ratio (16:9)
+
+        // Set the canvas width based on the height and aspect ratio
+        canvas.width = window.innerHeight * aspectRatio;
+        canvas.height = window.innerHeight;
+    }
+
+    // Function to update Open Graph and Twitter meta tags dynamically
+    function updateMetaTags() {
+        const ogTitle = getQueryParam('title') || 'Bubbler - Zábavný generátor bublin!';
+        const ogDescription = getQueryParam('description') || 'Vytvořte si vlastní vtipné bubliny!';
+        const ogImage = getQueryParam('image') || 'https://korczis.github.io/bubbler/images/image.png'; // Use default or uploaded image
         const ogUrl = window.location.href;
 
         document.getElementById('ogTitle').setAttribute('content', ogTitle);
         document.getElementById('ogDescription').setAttribute('content', ogDescription);
         document.getElementById('ogImage').setAttribute('content', ogImage);
         document.getElementById('ogUrl').setAttribute('content', ogUrl);
+
+        document.getElementById('twitterTitle').setAttribute('content', ogTitle);
+        document.getElementById('twitterDescription').setAttribute('content', ogDescription);
+        document.getElementById('twitterImage').setAttribute('content', ogImage);
+        document.getElementById('twitterUrl').setAttribute('content', ogUrl);
     }
 
-    // Update OG tags on page load
-    updateOgTags();
+    // Update canvas size and meta tags on page load and resize
+    window.addEventListener('load', () => {
+        resizeCanvas();
+        updateMetaTags();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
 </script>
 
 </body>

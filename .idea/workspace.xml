@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="560daec5-55b9-46b9-aa4e-431a648d806e" name="Changes" comment="feat: add OG tags">
+      <change afterPath="$PROJECT_DIR$/js/wisdom.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,13 +26,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;gh-pages&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/korczis/dev/bubbler&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Merging gh-pages",
+    "last_opened_file_path": "/Users/korczis/dev/bubbler"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -137,11 +139,11 @@
     </task>
     <task id="LOCAL-00011" summary="feat: add OG tags">
       <option name="closed" value="true" />
-      <created>1726442989709</created>
+      <created>1726442576534</created>
       <option name="number" value="00011" />
       <option name="presentableId" value="LOCAL-00011" />
       <option name="project" value="LOCAL" />
-      <updated>1726442989709</updated>
+      <updated>1726442576534</updated>
     </task>
     <option name="localTasksCounter" value="12" />
     <servers />

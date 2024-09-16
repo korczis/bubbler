@@ -185,10 +185,6 @@
     }
 
     /**
-     * Calculates the height of theHere’s the rest of the code, including the missing parts:
-
-```javascript
-    /**
      * Calculates the height of the text block that will be rendered.
      * @param {object} ctx - The canvas rendering context.
      * @param {string} text - The text to measure.
@@ -201,6 +197,28 @@
         const lineHeight = fontSize + 10;
         const lines = getLines(ctx, text, maxWidth - bubblePadding * 2);
         return lines.length * lineHeight + bubblePadding * 2;
+    }
+
+    /**
+     * Function to draw paragraph text across the canvas.
+     * @param {object} ctx - The canvas rendering context.
+     * @param {object} canvas - The canvas element.
+     * @param {object} params - The parameters including text, fontSize, fontStyle, textColor, etc.
+     */
+    function drawParagraph(ctx, canvas, params) {
+        const padding = 20;
+        const lineHeight = parseInt(params.fontSize) + 10;
+        const maxWidth = canvas.width - padding * 2;
+        const textY = canvas.height - lineHeight * 2; // Position the text at the bottom of the canvas
+
+        ctx.font = `${params.fontStyle} ${params.fontSize}px ${params.fontFamily}`;
+        ctx.fillStyle = params.textColor;
+        ctx.textAlign = params.textAlign;
+
+        const lines = getLines(ctx, params.text, maxWidth);
+        lines.forEach((line, index) => {
+            ctx.fillText(line, canvas.width / 2, textY + index * lineHeight);
+        });
     }
 
     // Initialize the canvas and drawing when the window is loaded

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bubbler - Vygenerovaný obrázek</title>
-    <link rel="stylesheet" href="./css/style.css">
 
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -34,9 +33,9 @@
         }
         canvas {
             display: block;
+            width: auto;
+            height: 100%;
             background-color: #ffffff; /* White background for canvas */
-            max-width: 100%;
-            max-height: 100%;
         }
     </style>
 </head>
@@ -53,31 +52,14 @@
         return urlParams.get(param);
     }
 
-    // Function to update canvas size while keeping aspect ratio of the image
+    // Function to update canvas size while maintaining aspect ratio
     function resizeCanvas() {
         const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
         const aspectRatio = 16 / 9; // Example aspect ratio (16:9)
 
-        // Set the canvas height to 100% of the window height
-        canvas.height = window.innerHeight;
         // Set the canvas width based on the height and aspect ratio
         canvas.width = window.innerHeight * aspectRatio;
-
-        // Draw the image onto the canvas
-        const img = new Image();
-        img.src = 'https://korczis.github.io/bubbler/images/image.png';
-        img.onload = function() {
-            // Calculate the scaling factors to maintain aspect ratio
-            const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
-            const imgWidth = img.width * scale;
-            const imgHeight = img.height * scale;
-            const offsetX = (canvas.width - imgWidth) / 2;
-            const offsetY = (canvas.height - imgHeight) / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawing
-            ctx.drawImage(img, offsetX, offsetY, imgWidth, imgHeight); // Draw the image
-        };
+        canvas.height = window.innerHeight;
     }
 
     // Function to update Open Graph and Twitter meta tags dynamically
